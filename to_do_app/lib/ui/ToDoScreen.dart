@@ -14,15 +14,14 @@ class _ToDoScreenState extends State<ToDoScreen> {
 
       floatingActionButton: FloatingActionButton(
           tooltip: "Add Item",
-          backgroundColor: Colors.blue,
+          backgroundColor: Colors.greenAccent,
           child: ListTile(
-            title: Icon(Icons.add),
+            title: Icon(Icons.add,color: Colors.black,),
           ),
           onPressed: _showFormDialog),
     );
   }
 
   void _showFormDialog(){
-
   }
 }
