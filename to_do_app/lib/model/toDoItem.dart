@@ -34,7 +34,7 @@ class ToDoItem extends StatelessWidget {
     return map;
   }
 
-  ToDoItem.fromMap(Map<String,dynamic>map{
+  ToDoItem.fromMap(Map<String,dynamic>map){
     this._itemName = map["itemName"];
     this._dateCreated = map["dateCreated"];
     this._id = map["id"];
