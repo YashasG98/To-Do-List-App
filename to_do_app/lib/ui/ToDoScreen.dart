@@ -102,6 +102,7 @@ class _ToDoScreenState extends State<ToDoScreen> {
             onPressed: () {
               _handleSubmitted(_textEditingController.text);
               _textEditingController.clear();
+              Navigator.pop(context);
             },
             child: Text("Save")),
         new FlatButton(
@@ -119,6 +120,9 @@ class _ToDoScreenState extends State<ToDoScreen> {
     List items = await db.getItems();
     items.forEach((item) {
       ToDoItem toDoItem = ToDoItem.map(item);
+      setState(() {
+        _itemList.add(ToDoItem.map(item));
+      });
       print("Db items: ${toDoItem.itemName}");
     });
   }
