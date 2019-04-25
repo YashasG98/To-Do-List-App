@@ -10,7 +10,9 @@ class ToDoScreen extends StatefulWidget {
 class _ToDoScreenState extends State<ToDoScreen> {
   final TextEditingController _textEditingController =
       new TextEditingController();
+
   var db = new DatabaseHelper();
+
   final List<ToDoItem> _itemList = <ToDoItem>[];
 
   @override
@@ -58,7 +60,8 @@ class _ToDoScreenState extends State<ToDoScreen> {
                             Icons.remove_circle,
                           color: Colors.red,
                         ),
-                        onPointerDown: (pointerEvent) => debugPrint(""),
+                        onPointerDown: (pointerEvent) =>
+                        _deleteToDo(_itemList[index].id, index),
                       ),
                     ),
                   );
@@ -124,6 +127,14 @@ class _ToDoScreenState extends State<ToDoScreen> {
         _itemList.add(ToDoItem.map(item));
       });
       print("Db items: ${toDoItem.itemName}");
+    });
+  }
+
+  _deleteToDo(int id, int index) async {
+    debugPrint("Item Deleted");
+    await db.deleteItem(id);
+    setState(() {
+      _itemList.removeAt(index);
     });
   }
 }
