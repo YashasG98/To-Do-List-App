@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:to_do_app/model/toDoItem.dart';
 import 'package:to_do_app/util/database_client.dart';
+import 'package:to_do_app/util/dateFormatter.dart';
 
 class ToDoScreen extends StatefulWidget {
   @override
@@ -25,7 +26,7 @@ class _ToDoScreenState extends State<ToDoScreen> {
   void _handleSubmitted(String text) async {
     _textEditingController.clear();
 
-    ToDoItem toDoItem = new ToDoItem(text, DateTime.now().toIso8601String());
+    ToDoItem toDoItem = new ToDoItem(text, dateFormatted());
     int savedItemId = await db.saveItem(toDoItem);
 
     ToDoItem addedItem = await db.getItem(savedItemId);
@@ -53,7 +54,7 @@ class _ToDoScreenState extends State<ToDoScreen> {
                     color: Colors.white10,
                     child: ListTile(
                       title: _itemList[index],
-                      onLongPress: () => debugPrint(""),
+                      onLongPress: () => _updateItem(_itemList[index],index),
                       trailing: Listener(
                         key: Key(_itemList[index].itemName),
                         child: Icon(
@@ -135,6 +136,68 @@ class _ToDoScreenState extends State<ToDoScreen> {
     await db.deleteItem(id);
     setState(() {
       _itemList.removeAt(index);
+    });
+  }
+
+  _updateItem(ToDoItem item, int index) async {
+    var alert = AlertDialog(
+      title: Text("Update Item"),
+      content: Row(
+        children: <Widget>[
+          Expanded(
+            child: TextField(
+              controller: _textEditingController,
+              autofocus: true,
+
+              decoration: InputDecoration(
+                labelText: "Item",
+                hintText: "Updated task",
+                icon: Icon(Icons.update)
+              ),
+            ),
+          )
+        ],
+      ),
+      actions: <Widget>[
+        FlatButton(
+          onPressed: () async{
+            ToDoItem newItemUpdated = ToDoItem.fromMap(
+              {
+                "itemName": _textEditingController.text,
+                "dateCreated" : dateFormatted(),
+                "id" : item.id,
+              }
+            );
+            _textEditingController.clear();
+            _handleSubmittedUpdate(index,item);
+            await db.updateItem(newItemUpdated);
+
+            setState(() {
+              _readToDoList();
+            });
+
+            Navigator.pop(context);
+          },
+          child: Text("Update"),
+        ),
+        FlatButton(
+          onPressed: () => Navigator.pop(context),
+          child: Text("Cancel"),
+        )
+      ],
+    );
+    showDialog(
+        context: context,
+        builder: (_) {
+          return alert;
+        });
+  }
+
+  void _handleSubmittedUpdate(int index, ToDoItem item){
+    setState(() {
+      _itemList.removeWhere((element){
+        _itemList[index].itemName == item.itemName;
+      });
     });
   }
 }
